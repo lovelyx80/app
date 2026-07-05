@@ -59,6 +59,12 @@ abstract class GenerateProtoTask : DefaultTask() {
         val outputDir = generatedSourcesDir.get().asFile
         val protocFile = protocExecutable.get().asFile
 
+        // Remove any stale generated sources from a previous run/cache so we never
+        // compile against out-of-date proto classes (e.g. missing newly added fields).
+        val generatedProtoPackageDir = outputDir.resolve("com/metrolist/music/listentogether/proto")
+        if (generatedProtoPackageDir.exists()) {
+            generatedProtoPackageDir.deleteRecursively()
+        }
         outputDir.mkdirs()
 
         if (!protocFile.exists() || protocFile.length() == 0L) {
